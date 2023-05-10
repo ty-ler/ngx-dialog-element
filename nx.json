@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "ngx-native-dialog",
+  "npmScope": "ngx-dialog-element",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",

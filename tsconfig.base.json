@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ngx-native-dialog/dialog": ["libs/dialog/src/index.ts"]
+      "ngx-dialog-element": ["libs/dialog/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

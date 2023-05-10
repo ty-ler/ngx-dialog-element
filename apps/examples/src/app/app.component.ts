@@ -6,14 +6,14 @@ import {
   DialogComponent,
   DialogOutletComponent,
   DialogService,
-} from '@ngx-native-dialog/dialog';
+} from 'ngx-dialog-element';
 import { takeUntil } from 'rxjs';
 import { DialogTestComponent } from './dialog-test.component';
 import { DialogTestService } from './dialog-test.service';
 
 @Component({
   standalone: true,
-  selector: 'ngx-native-dialog-root',
+  selector: 'ngx-dialog-element-root',
   imports: [
     CommonModule,
     A11yModule,

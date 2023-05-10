@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { DialogRef, DialogService } from '@ngx-native-dialog/dialog';
+import { DialogRef, DialogService } from 'ngx-dialog-element';
 import { DialogTestService } from './dialog-test.service';
 
 @Component({

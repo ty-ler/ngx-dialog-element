@@ -17,7 +17,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "ngx",
+            "prefix": "ngx-dialog-element",
             "style": "kebab-case"
           }
         ]
