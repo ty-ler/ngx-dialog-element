@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   QueryList,
+  signal,
   Type,
   ViewChildren,
 } from '@angular/core';
@@ -21,39 +22,31 @@ import { DialogComponent } from './dialog.component';
 import { DialogService } from './dialog.service';
 
 interface ComponentDialogEntry {
-  index: number;
   config: DialogComponentConfig;
-  component: Type<any>;
-  componentInjector: Injector;
+  component?: Type<any>;
+  componentInjector?: Injector;
 }
 
 @Component({
   selector: 'ngx-dialog-outlet',
   standalone: true,
   imports: [CommonModule, DialogComponent],
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-    `,
-  ],
   template: `
     <ngx-dialog
-      *ngFor="let config of configs; let i = index"
+      *ngFor="let entry of dialogEntries()"
       #dialog
-      [contentClass]="config.contentClass"
-      [horizontalMargin]="config.horizontalMargin"
-      [verticalMargin]="config.verticalMargin"
-      [blockScroll]="config.blockScroll"
-      [closeOnBackdropClick]="config.closeOnBackdropClick"
-      [closeOnEscapeKeyDown]="config.closeOnEscapeKeyDown"
-      [focusAutoCapture]="config.focusAutoCapture"
+      [contentClass]="entry.config.contentClass"
+      [horizontalMargin]="entry.config.horizontalMargin"
+      [verticalMargin]="entry.config.verticalMargin"
+      [blockScroll]="entry.config.blockScroll"
+      [closeOnBackdropClick]="entry.config.closeOnBackdropClick"
+      [closeOnEscapeKeyDown]="entry.config.closeOnEscapeKeyDown"
+      [focusAutoCapture]="entry.config.focusAutoCapture"
     >
       <ng-template
         *ngComponentOutlet="
-          components[i] ?? null;
-          injector: componentInjectors[i]
+          entry.component ?? null;
+          injector: entry.componentInjector
         "
       ></ng-template>
     </ngx-dialog>
@@ -62,9 +55,8 @@ interface ComponentDialogEntry {
 export class DialogOutletComponent implements OnInit, OnDestroy {
   @ViewChildren(DialogComponent) dialogs!: QueryList<DialogComponent>;
 
-  public readonly configs: DialogComponentConfig[] = [];
-  public readonly components: (Type<any> | null)[] = [];
-  public readonly componentInjectors: Injector[] = [];
+  private readonly _dialogEntries = signal<ComponentDialogEntry[]>([]);
+  public readonly dialogEntries = this._dialogEntries.asReadonly();
 
   private readonly _dialogService = inject(DialogService);
   private readonly _injector = inject(Injector);
@@ -92,7 +84,11 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
 
     const index = this.dialogs.length;
 
-    this.configs.push(config as DialogComponentConfig);
+    this._dialogEntries.mutate((entries) =>
+      entries.push({
+        config: config as DialogComponentConfig,
+      })
+    );
 
     this._cdr.detectChanges();
 
@@ -115,11 +111,13 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
       parent: this._injector,
     });
 
-    this.components.push(component);
-    this.componentInjectors.push(componentInjector);
+    this._dialogEntries.mutate((entries) => {
+      entries[index].component = component;
+      entries[index].componentInjector = componentInjector;
+    });
 
     dialog.open();
-    dialog.closed.pipe(takeUntil(this._destroyed$), take(1)).subscribe(() => {
+    dialog.closed.pipe(takeUntil(this.destroyed$), take(1)).subscribe(() => {
       this._delete(index);
     });
 
@@ -131,7 +129,7 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
   }
 
   public getConfig(index: number) {
-    const config = this.configs[index];
+    const config = this.dialogEntries()[index].config;
     if (!config) {
       throw new Error('Failed to find dialog config');
     }
@@ -145,12 +143,12 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
   ) {
     const config = this.getConfig(index);
     const updatedConfig = update(config) as DialogComponentConfig;
-    this.configs[index] = updatedConfig;
+    this._dialogEntries.mutate(
+      (entries) => (entries[index].config = updatedConfig)
+    );
   }
 
   private _delete(index: number) {
-    this.configs.splice(index, 1);
-    this.components.splice(index, 1);
-    this.componentInjectors.splice(index, 1);
+    this._dialogEntries.mutate((entries) => entries.splice(index, 1));
   }
 }

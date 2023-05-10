@@ -12,6 +12,10 @@ body.ngx-dialog-scroll-blocked {
   overflow: hidden;
 }
 
+ngx-dialog-outlet {
+  display: contents;
+}
+
 ngx-dialog {
   display: contents;
 }
