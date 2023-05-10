@@ -4,14 +4,15 @@ import {
   Component,
   inject,
   Injector,
-  OnDestroy,
   OnInit,
   QueryList,
+  runInInjectionContext,
   signal,
   Type,
   ViewChildren,
 } from '@angular/core';
-import { ReplaySubject, take, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
 import {
   DEFAULT_DIALOG_CONFIG,
   DialogComponentConfig,
@@ -52,7 +53,7 @@ interface ComponentDialogEntry {
     </ngx-dialog>
   `,
 })
-export class DialogOutletComponent implements OnInit, OnDestroy {
+export class DialogOutletComponent implements OnInit {
   @ViewChildren(DialogComponent) dialogs!: QueryList<DialogComponent>;
 
   private readonly _dialogEntries = signal<ComponentDialogEntry[]>([]);
@@ -62,15 +63,8 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
   private readonly _injector = inject(Injector);
   private readonly _cdr = inject(ChangeDetectorRef);
 
-  private readonly _destroyed$ = new ReplaySubject<void>(1);
-  public readonly destroyed$ = this._destroyed$.asObservable();
-
   ngOnInit() {
     this._dialogService.registerDialogOutlet(this);
-  }
-
-  ngOnDestroy(): void {
-    this._destroyed$.next();
   }
 
   public open<TDialogData, TDialogResult>(
@@ -117,8 +111,11 @@ export class DialogOutletComponent implements OnInit, OnDestroy {
     });
 
     dialog.open();
-    dialog.closed.pipe(takeUntil(this.destroyed$), take(1)).subscribe(() => {
-      this._delete(index);
+
+    runInInjectionContext(this._injector, () => {
+      dialog.closed.pipe(takeUntilDestroyed(), take(1)).subscribe(() => {
+        this._delete(index);
+      });
     });
 
     return dialogRef;
