@@ -35,7 +35,6 @@ interface ComponentDialogEntry {
   template: `
     <ngx-dialog
       *ngFor="let entry of dialogEntries()"
-      #dialog
       [contentClass]="entry.config.contentClass"
       [horizontalMargin]="entry.config.horizontalMargin"
       [verticalMargin]="entry.config.verticalMargin"
