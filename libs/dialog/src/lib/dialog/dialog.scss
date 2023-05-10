@@ -1,0 +1,47 @@
+@keyframes ngx-dialog-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+body.ngx-dialog-scroll-blocked {
+  overflow: hidden;
+}
+
+ngx-dialog {
+  display: contents;
+}
+
+.ngx-dialog,
+.ngx-dialog::backdrop {
+  animation: ngx-dialog-enter 0.2s ease;
+}
+
+.ngx-dialog {
+  width: 100%;
+  height: 100%;
+  max-width: calc(100% - var(--ngx-dialog-horizontal-margin));
+  max-height: calc(100% - var(--ngx-dialog-vertical-margin));
+  background: transparent;
+  padding: 0;
+  outline: none;
+}
+
+.ngx-dialog[open] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ngx-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.ngx-dialog-content {
+  background: white;
+  padding: 1rem;
+}

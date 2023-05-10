@@ -1,0 +1,15 @@
+@import '../../../libs/dialog/src/lib/dialog/dialog.scss';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add global styles to this file, and also import other style files */
+
+body {
+  @apply tw-p-6;
+}
+
+button {
+  @apply tw-px-3 tw-py-2 tw-bg-blue-500 tw-text-white tw-rounded;
+}
