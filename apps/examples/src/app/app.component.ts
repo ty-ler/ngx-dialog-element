@@ -7,6 +7,7 @@ import {
   DialogOutletComponent,
   DialogService,
 } from '@ngx-native-dialog/dialog';
+import { takeUntil } from 'rxjs';
 import { DialogTestComponent } from './dialog-test.component';
 import { DialogTestService } from './dialog-test.service';
 
@@ -65,8 +66,11 @@ export class AppComponent {
 
   protected openDialogComponent() {
     const ref = this._dialogService.open(DialogTestComponent, {
+      data: {
+        hello: 'world',
+      },
       contentClass: '!tw-bg-blue-500',
-      // closeOnBackdropClick: false,
+      closeOnBackdropClick: false,
       // closeOnEscapeKeyDown: false,
       blockScroll: false,
       providers: [
@@ -74,6 +78,10 @@ export class AppComponent {
           provide: DialogTestService,
         },
       ],
+    });
+
+    ref.backdropClicked$.pipe(takeUntil(ref.closed$)).subscribe(() => {
+      ref.close('clicked backdrop');
     });
 
     ref.closed$.subscribe((result) => {

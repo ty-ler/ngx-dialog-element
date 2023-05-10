@@ -55,7 +55,7 @@ export class DialogComponent implements DialogComponentConfig {
   @Input() closeOnEscapeKeyDown = DEFAULT_DIALOG_CONFIG.closeOnEscapeKeyDown;
   @Input() focusAutoCapture = DEFAULT_DIALOG_CONFIG.focusAutoCapture;
 
-  @Output() closed = new EventEmitter<Event>();
+  @Output() closed = new EventEmitter<any>();
   @Output() backdropClicked = new EventEmitter<MouseEvent>();
 
   private readonly _isOpen = signal(false);

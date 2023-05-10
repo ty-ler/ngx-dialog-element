@@ -10,7 +10,8 @@ export type DialogComponentConfig = {
   focusAutoCapture: boolean;
 };
 
-export type DialogConfig = Partial<DialogComponentConfig> & {
+export type DialogConfig<TDialogData = any> = Partial<DialogComponentConfig> & {
+  data?: TDialogData;
   providers?: StaticProvider[];
 };
 

@@ -8,14 +8,30 @@ import { DialogOutletComponent } from './dialog-outlet.component';
 export class DialogService {
   private _dialogOutletComponent: DialogOutletComponent | null = null;
 
-  public open<TDialogResult = any>(component: Type<any>, config: DialogConfig) {
+  public open<TDialogData = any, TDialogResult = any>(
+    component: Type<any>,
+    config: DialogConfig<TDialogData>
+  ) {
     if (!this._dialogOutletComponent) {
       throw new Error(
         "No dialog outlet registered. Add a DialogOutletComponent somewhere in the app's AppComponent."
       );
     }
 
-    return this._dialogOutletComponent.open<TDialogResult>(component, config);
+    return this._dialogOutletComponent.open<TDialogData, TDialogResult>(
+      component,
+      config
+    );
+  }
+
+  public closeAll() {
+    if (!this._dialogOutletComponent) {
+      throw new Error(
+        "No dialog outlet registered. Add a DialogOutletComponent somewhere in the app's AppComponent."
+      );
+    }
+
+    this._dialogOutletComponent.closeAll();
   }
 
   public registerDialogOutlet(dialogOutletComponent: DialogOutletComponent) {

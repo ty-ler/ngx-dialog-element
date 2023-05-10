@@ -1,4 +1,10 @@
-import { Component, HostBinding, inject, OnDestroy } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { DialogRef, DialogService } from '@ngx-native-dialog/dialog';
 import { DialogTestService } from './dialog-test.service';
 
@@ -25,12 +31,18 @@ import { DialogTestService } from './dialog-test.service';
     </div>
   `,
 })
-export class DialogTestComponent implements OnDestroy {
+export class DialogTestComponent implements OnInit, OnDestroy {
   @HostBinding('class') _classes = 'tw-flex tw-flex-col tw-gap-2';
 
   private readonly _service = inject(DialogTestService);
   private readonly _dialogRef = inject(DialogRef);
   private readonly _dialogService = inject(DialogService);
+  private readonly _dialogData = this._dialogRef.getConfig().data;
+
+  ngOnInit() {
+    console.log(this._dialogRef);
+    console.log(this._dialogData);
+  }
 
   ngOnDestroy(): void {
     console.log('destroyed');
@@ -48,7 +60,6 @@ export class DialogTestComponent implements OnDestroy {
   }
 
   protected handleClickHelloWorldButton() {
-    // this._service.helloWorld();
     this._dialogService.open(DialogTestComponent, {
       providers: [
         {
@@ -59,7 +70,6 @@ export class DialogTestComponent implements OnDestroy {
   }
 
   protected handleClickCloseButton() {
-    console.log(this._dialogRef.getConfig());
     this._dialogRef.close('close');
   }
 }
