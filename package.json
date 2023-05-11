@@ -2,7 +2,9 @@
   "name": "ngx-dialog-element",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start-docs": "npx nx serve docs"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~16.0.0",
