@@ -18,9 +18,9 @@ import {
   DialogComponentConfig,
   DialogConfig,
 } from './dialog-config';
+import { DialogOutletService } from './dialog-outlet.service';
 import { DialogRef } from './dialog-ref';
 import { DialogComponent } from './dialog.component';
-import { DialogService } from './dialog.service';
 
 interface ComponentDialogEntry {
   config: DialogComponentConfig;
@@ -58,12 +58,12 @@ export class DialogOutletComponent implements OnInit {
   private readonly _dialogEntries = signal<ComponentDialogEntry[]>([]);
   public readonly dialogEntries = this._dialogEntries.asReadonly();
 
-  private readonly _dialogService = inject(DialogService);
+  private readonly _dialogOutletService = inject(DialogOutletService);
   private readonly _injector = inject(Injector);
   private readonly _cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    this._dialogService.registerDialogOutlet(this);
+    this._dialogOutletService.registerDialogOutlet(this);
   }
 
   public open<TDialogData, TDialogResult>(

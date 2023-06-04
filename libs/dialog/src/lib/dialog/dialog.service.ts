@@ -1,40 +1,35 @@
-import { Injectable, Type } from '@angular/core';
+import { inject, Injectable, Type } from '@angular/core';
 import { DialogConfig } from './dialog-config';
-import { DialogOutletComponent } from './dialog-outlet.component';
+import { DialogOutletService } from './dialog-outlet.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DialogService {
-  private _dialogOutletComponent: DialogOutletComponent | null = null;
+  private readonly _dialogOutletService = inject(DialogOutletService);
 
   public open<TDialogData = any, TDialogResult = any>(
     component: Type<any>,
     config: DialogConfig<TDialogData>
   ) {
-    if (!this._dialogOutletComponent) {
+    const dialogOutlet = this._dialogOutletService.getDialogOutlet();
+    if (!dialogOutlet) {
       throw new Error(
         "No dialog outlet registered. Add a DialogOutletComponent somewhere in the app's AppComponent."
       );
     }
 
-    return this._dialogOutletComponent.open<TDialogData, TDialogResult>(
-      component,
-      config
-    );
+    return dialogOutlet.open<TDialogData, TDialogResult>(component, config);
   }
 
   public closeAll() {
-    if (!this._dialogOutletComponent) {
+    const dialogOutlet = this._dialogOutletService.getDialogOutlet();
+    if (!dialogOutlet) {
       throw new Error(
         "No dialog outlet registered. Add a DialogOutletComponent somewhere in the app's AppComponent."
       );
     }
 
-    this._dialogOutletComponent.closeAll();
-  }
-
-  public registerDialogOutlet(dialogOutletComponent: DialogOutletComponent) {
-    this._dialogOutletComponent = dialogOutletComponent;
+    dialogOutlet.closeAll();
   }
 }
